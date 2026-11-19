@@ -1,0 +1,57 @@
+services:
+  cap:
+    container_name: cap
+    image: tiago2/cap:4
+    environment:
+      ADMIN_KEY: ${ADMIN_KEY:?set ADMIN_KEY in .env}
+      VALKEY_URL: redis://valkey:6379
+    volumes:
+      - cap-data:/usr/src/app/data
+    depends_on:
+      valkey:
+        condition: service_healthy
+    stop_grace_period: 15s
+    restart: unless-stopped
+
+  valkey:
+    container_name: cap-valkey
+    image: valkey/valkey:9-alpine
+    command: >
+      valkey-server
+      --appendonly yes
+      --appendfsync everysec
+      --save 60 1
+      --maxmemory-policy noeviction
+      --loglevel warning
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  caddy:
+    container_name: cap-caddy
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - cap
+    restart: unless-stopped
+
+volumes:
+  cap-data:
+  valkey-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,12 @@
+{$CAP_DOMAIN:localhost} {
+	encode zstd gzip
+
+	reverse_proxy cap:3000 {
+		# Cap reads the last X-Forwarded-For entry; overwrite it with the real client IP so it can't be spoofed.
+		# Pick "X-Forwarded-For" under Instance settings > Visitor location > Your proxy or CDN.
+		header_up X-Forwarded-For {remote_host}
+
+		health_uri /health
+		health_interval 30s
+	}
+}
