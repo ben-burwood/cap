@@ -1,0 +1,31 @@
+{
+  "instance": {
+    "headers": {
+      "ipHeader": "X-Forwarded-For",
+      "countryHeader": "",
+      "asnHeader": ""
+    },
+    "ratelimit": {
+      "max": 30,
+      "duration": 5000
+    },
+    "cors": {
+      "origins": null
+    },
+    "filtering": {
+      "blockNonBrowserUA": false,
+      "requiredHeaders": []
+    }
+  },
+  "sites": {
+    "example": {
+      "corsOrigins": ["https://example.com"],
+      "difficulty": 4,
+      "challengeCount": 50,
+      "instrumentation": true,
+      "blockAutomatedBrowsers": false,
+      "behavior": "off",
+      "blockAgents": "off"
+    }
+  }
+}

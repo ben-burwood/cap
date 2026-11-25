@@ -5,6 +5,8 @@ services:
     environment:
       ADMIN_KEY: ${ADMIN_KEY:?set ADMIN_KEY in .env}
       VALKEY_URL: redis://valkey:6379
+    ports:
+      - 3000:3000  # Don't Expose in Production, used for Configuration API
     volumes:
       - cap-data:/usr/src/app/data
     depends_on:
